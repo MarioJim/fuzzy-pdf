@@ -24,10 +24,10 @@ impl fmt::Debug for PDFToTextError {
     }
 }
 
-impl<'a> TryFrom<&'a str> for PDFRepr {
+impl TryFrom<&String> for PDFRepr {
     type Error = PDFToTextError;
 
-    fn try_from(filename: &'a str) -> Result<Self, Self::Error> {
+    fn try_from(filename: &String) -> Result<Self, Self::Error> {
         let pdftotext_result = Command::new("pdftotext")
             .arg("-nopgbrk")
             .arg(filename)
@@ -40,7 +40,7 @@ impl<'a> TryFrom<&'a str> for PDFRepr {
             .map_err(|_| PDFToTextError::FailedToCreateString)?;
 
         Ok(PDFRepr {
-            filename: String::from(filename),
+            filename: String::clone(&filename),
             content,
         })
     }

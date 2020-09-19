@@ -6,7 +6,6 @@ Fuzzy finder for a collection of pdf files. Based on [bellecp/fast-p](https://gi
 
 - poppler for `pdftotext`
 - `fzf` or skim `sk`
-- `fd`
 - a way to open
 
 ### Usage

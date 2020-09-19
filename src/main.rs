@@ -1,18 +1,14 @@
-use std::str;
-use std::{convert::TryFrom, process::Command};
+use std::convert::TryFrom;
 
 use rayon::prelude::*;
 
+mod get_files;
 mod pdf;
 
 fn main() {
-    let pdf_files = Command::new("fd")
-        .arg("--extension=pdf")
-        .output()
-        .expect("fd failed to execute");
-    let lines = str::from_utf8(&pdf_files.stdout).unwrap();
+    let pdf_files = get_files::find_pdf_files();
 
-    let p: Vec<pdf::PDFRepr> = lines
+    let p: Vec<pdf::PDFRepr> = pdf_files
         .par_lines()
         .map(|string| pdf::PDFRepr::try_from(string).unwrap())
         .collect();

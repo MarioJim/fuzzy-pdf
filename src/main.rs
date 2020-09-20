@@ -13,16 +13,20 @@ mod pdf;
 
 fn main() {
     let matches = cli::get_app().get_matches();
-    let path = matches.value_of("PATH").unwrap();
     let (tx_item, rx_item): (SkimItemSender, SkimItemReceiver) = unbounded();
 
-    WalkDir::new(path)
+    WalkDir::new(matches.value_of("PATH").unwrap())
+        .skip_hidden(!matches.is_present("hidden"))
         .into_iter()
-        .filter_map(|e| e.ok())
-        .map(|e| e.path())
-        .filter(|e| e.extension().is_some() && e.extension().unwrap() == "pdf")
-        .map(|p| p.into_os_string())
-        .filter_map(|file_path| match pdf::PDFContent::try_from(file_path) {
+        .filter_map(|possible_path| possible_path.ok())
+        .filter_map(|path| {
+            let possible_pdf = path.path();
+            if let Some(Some("pdf")) = possible_pdf.extension().map(|ext| ext.to_str()) {
+                return Some(possible_pdf.into_os_string());
+            }
+            None
+        })
+        .filter_map(|pdf_path| match pdf::PDFContent::try_from(pdf_path) {
             Ok(pdf_content) => Some(pdf_content),
             Err((error, filename)) => {
                 println!("{:?}: {:?}", filename, error);
@@ -36,7 +40,7 @@ fn main() {
 
     let preview_cmd = format!(
         "echo {{}} | grep --ignore-case --context={} --color=always {{q}}",
-        matches.value_of("context").unwrap_or("3")
+        matches.value_of("context").unwrap()
     );
     let skim_options = SkimOptionsBuilder::default()
         .reverse(true)
@@ -58,7 +62,7 @@ fn main() {
             .downcast_ref::<pdf::PDFContent>()
             .unwrap()
             .filename;
-        let _ = Command::new(matches.value_of("COMMAND").unwrap())
+        Command::new(matches.value_of("COMMAND").unwrap())
             .arg(file_path)
             .spawn()
             .unwrap();

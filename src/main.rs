@@ -4,31 +4,28 @@ use std::sync::Arc;
 
 #[macro_use]
 extern crate lazy_static;
-use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
+use jwalk::WalkDir;
 use skim::prelude::{unbounded, SkimOptionsBuilder};
 use skim::{Skim, SkimItemReceiver, SkimItemSender};
-use walkdir::WalkDir;
 
 mod cli;
 mod pdf;
 
 fn main() {
     let matches = cli::get_app().get_matches();
-
-    let file_paths: Vec<String> = WalkDir::new(matches.value_of("PATH").unwrap())
-        .into_iter()
-        .filter_map(|e| e.ok())
-        .map(|e| e.into_path().into_os_string().into_string().unwrap())
-        .filter(|e| e.ends_with(".pdf"))
-        .collect();
+    let path = matches.value_of("PATH").unwrap();
     let (tx_item, rx_item): (SkimItemSender, SkimItemReceiver) = unbounded();
 
-    file_paths
-        .par_iter()
+    WalkDir::new(path)
+        .into_iter()
+        .filter_map(|e| e.ok())
+        .map(|e| e.path())
+        .filter(|e| e.extension().is_some() && e.extension().unwrap() == "pdf")
+        .map(|p| p.into_os_string())
         .filter_map(|file_path| match pdf::PDFContent::try_from(file_path) {
             Ok(pdf_content) => Some(pdf_content),
-            Err(error) => {
-                println!("{}: {:?}", file_path, error);
+            Err((error, filename)) => {
+                println!("{:?}: {:?}", filename, error);
                 None
             }
         })
@@ -38,7 +35,7 @@ fn main() {
     drop(tx_item);
 
     let preview_cmd = format!(
-        "echo {{}} | grep -E {{q}} --ignore-case --context={} --color=always",
+        "echo {{}} | grep --ignore-case --context={} --color=always {{q}}",
         matches.value_of("context").unwrap_or("3")
     );
     let skim_options = SkimOptionsBuilder::default()

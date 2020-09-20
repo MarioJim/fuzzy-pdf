@@ -10,7 +10,6 @@ license = "MIT"
 [dependencies]
 clap = "3.0.0-beta.2"
 lazy_static = "1.4.0"
-rayon = "1.1"
+jwalk = "0.5"
 regex = "1"
 skim = "0.8.2"
-walkdir = "2"

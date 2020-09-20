@@ -1,5 +1,6 @@
 use std::borrow::Cow;
 use std::convert::TryFrom;
+use std::ffi::OsString;
 use std::fmt;
 use std::process::Command;
 
@@ -8,7 +9,7 @@ use skim::{AnsiString, SkimItem};
 
 #[derive(Debug)]
 pub struct PDFContent {
-    pub filename: String,
+    pub filename: OsString,
     pub content: String,
 }
 
@@ -22,31 +23,32 @@ impl SkimItem for PDFContent {
     }
 }
 
-impl TryFrom<&String> for PDFContent {
-    type Error = PDFToTextError;
+impl TryFrom<OsString> for PDFContent {
+    type Error = (PDFToTextError, OsString);
 
-    fn try_from(filename: &String) -> Result<Self, Self::Error> {
-        let pdftotext_result = Command::new("pdftotext")
+    fn try_from(filename: OsString) -> Result<Self, Self::Error> {
+        let pdftotext_result = match Command::new("pdftotext")
             .arg("-nopgbrk")
-            .arg(filename)
+            .arg(&filename)
             .arg("-")
             .output()
-            .map_err(|_| PDFToTextError::FailedToExecute)?
-            .stdout;
+        {
+            Ok(out) => out.stdout,
+            Err(_) => return Err((PDFToTextError::FailedToExecute, filename)),
+        };
 
-        let content = String::from_utf8(pdftotext_result)
-            .map_err(|_| PDFToTextError::FailedToCreateString)?;
+        let content = match String::from_utf8(pdftotext_result) {
+            Ok(content) => content,
+            Err(_) => return Err((PDFToTextError::FailedToCreateString, filename)),
+        };
 
         lazy_static! {
             static ref ONLY_WHITESPACE: Regex = Regex::new(r"^\s*$").unwrap();
         }
         if ONLY_WHITESPACE.is_match(&content) {
-            Err(PDFToTextError::EmptyFile)
+            Err((PDFToTextError::EmptyFile, filename))
         } else {
-            Ok(PDFContent {
-                filename: String::clone(&filename),
-                content,
-            })
+            Ok(PDFContent { filename, content })
         }
     }
 }

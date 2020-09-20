@@ -4,10 +4,13 @@ use rayon::prelude::*;
 use skim::prelude::*;
 use walkdir::WalkDir;
 
+mod cli;
 mod pdf;
 
 fn main() {
-    let file_paths: Vec<String> = WalkDir::new(".")
+    let matches = cli::get_app().get_matches();
+
+    let file_paths: Vec<String> = WalkDir::new(matches.value_of("PATH").unwrap())
         .into_iter()
         .filter_map(|e| e.ok())
         .map(|e| e.into_path().into_os_string().into_string().unwrap())
@@ -23,12 +26,15 @@ fn main() {
         });
     drop(tx_item);
 
-    // TODO: Generate string with clap arguments, like context lines (-NUM in grep cmd)
+    let preview_cmd = format!(
+        "echo {{}} | grep -E {{q}} --ignore-case --context={} --color=always",
+        matches.value_of("context").unwrap_or("3")
+    );
     let skim_options = SkimOptionsBuilder::default()
         .reverse(true)
         .exact(true)
         .preview_window(Some("down:80%"))
-        .preview(Some("echo {} | grep -E {q} -i -3 --color=always"))
+        .preview(Some(&preview_cmd))
         .build()
         .unwrap();
 

@@ -1,4 +1,5 @@
 use std::convert::TryFrom;
+use std::process::Command;
 
 use rayon::prelude::*;
 use skim::prelude::*;
@@ -42,14 +43,17 @@ fn main() {
         .map(|elem| elem.selected_items)
         .unwrap_or_else(|| Vec::new());
 
+    // TODO: Implement the possibility to inject a complex command like
+    // https://github.com/lotabout/skim/blob/master/src/util.rs#L332
     for selected_item in selected_items {
-        print!(
-            "{}",
-            (*selected_item)
-                .as_any()
-                .downcast_ref::<pdf::PDFContent>()
-                .unwrap()
-                .filename
-        );
+        let file_path = &(*selected_item)
+            .as_any()
+            .downcast_ref::<pdf::PDFContent>()
+            .unwrap()
+            .filename;
+        let _ = Command::new(matches.value_of("COMMAND").unwrap())
+            .arg(file_path)
+            .spawn()
+            .unwrap();
     }
 }

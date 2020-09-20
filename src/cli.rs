@@ -12,6 +12,12 @@ pub fn get_app() -> clap::App<'static> {
                 .index(1),
         )
         .arg(
+            Arg::new("COMMAND")
+                .about("The command to execute when an item has been selected")
+                .default_value("xdg-open")
+                .index(2),
+        )
+        .arg(
             Arg::new("context")
                 .about("Surrounding lines to show in the preview")
                 .short('c')

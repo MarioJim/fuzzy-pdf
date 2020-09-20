@@ -10,9 +10,10 @@ Fuzzy finder for a collection of pdf files. Based on [bellecp/fast-p](https://gi
 ## Usage
 
 ```
-fuzzy-pdf [OPTIONS] [PATH] | xargs -r --null 'xdg-open'
+fuzzy-pdf [OPTIONS] [PATH] [COMMAND]
 ```
 
-You can replace `xdg-open` with another program (for example `zathura`) to open it in a different pdf viewer.
+- If you don't specify a path, it will default to the current folder.
+- If you don't specify a command, the selected pdf will be opened with `xdg-open`.
 
-If you don't specify a path, it will default to the current folder. Run `fuzzy-pdf` for more information on options.
+Run `fuzzy-pdf` for more information on options.

@@ -1,8 +1,10 @@
+use std::borrow::Cow;
 use std::convert::TryFrom;
 use std::fmt;
 use std::process::Command;
 
-use skim::prelude::*;
+use regex::Regex;
+use skim::{AnsiString, SkimItem};
 
 #[derive(Debug)]
 pub struct PDFContent {
@@ -35,16 +37,24 @@ impl TryFrom<&String> for PDFContent {
         let content = String::from_utf8(pdftotext_result)
             .map_err(|_| PDFToTextError::FailedToCreateString)?;
 
-        Ok(PDFContent {
-            filename: String::clone(&filename),
-            content,
-        })
+        lazy_static! {
+            static ref ONLY_WHITESPACE: Regex = Regex::new(r"^\s*$").unwrap();
+        }
+        if ONLY_WHITESPACE.is_match(&content) {
+            Err(PDFToTextError::EmptyFile)
+        } else {
+            Ok(PDFContent {
+                filename: String::clone(&filename),
+                content,
+            })
+        }
     }
 }
 
 pub enum PDFToTextError {
     FailedToExecute,
     FailedToCreateString,
+    EmptyFile,
 }
 
 impl fmt::Debug for PDFToTextError {
@@ -54,6 +64,7 @@ impl fmt::Debug for PDFToTextError {
             PDFToTextError::FailedToCreateString => {
                 write!(f, "failed to create a string from pdftotext output")
             }
+            PDFToTextError::EmptyFile => write!(f, "no text could be recognized from this file"),
         }
     }
 }

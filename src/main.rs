@@ -1,8 +1,12 @@
 use std::convert::TryFrom;
 use std::process::Command;
+use std::sync::Arc;
 
-use rayon::prelude::*;
-use skim::prelude::*;
+#[macro_use]
+extern crate lazy_static;
+use rayon::iter::{IntoParallelRefIterator, ParallelIterator};
+use skim::prelude::{unbounded, SkimOptionsBuilder};
+use skim::{Skim, SkimItemReceiver, SkimItemSender};
 use walkdir::WalkDir;
 
 mod cli;
@@ -21,7 +25,13 @@ fn main() {
 
     file_paths
         .par_iter()
-        .map(|file_path| pdf::PDFContent::try_from(file_path).unwrap())
+        .filter_map(|file_path| match pdf::PDFContent::try_from(file_path) {
+            Ok(pdf_content) => Some(pdf_content),
+            Err(error) => {
+                println!("{}: {:?}", file_path, error);
+                None
+            }
+        })
         .for_each(|pdf_content| {
             let _ = tx_item.send(Arc::new(pdf_content));
         });

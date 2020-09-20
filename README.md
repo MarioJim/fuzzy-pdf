@@ -14,6 +14,6 @@ fuzzy-pdf [OPTIONS] [PATH] [COMMAND]
 ```
 
 - If you don't specify a path, it will default to the current folder.
-- If you don't specify a command, the selected pdf will be opened with `xdg-open`.
+- If you don't specify a command, the selected pdf will be opened with `start` on Windows, `open` in MacOS and `xdg-open` in other OSs.
 
 Run `fuzzy-pdf -h` for more information on options.

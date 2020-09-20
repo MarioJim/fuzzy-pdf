@@ -1,6 +1,14 @@
 use clap::{crate_version, App, Arg};
 
 pub fn get_app() -> clap::App<'static> {
+    let default_exec = if cfg!(windows) {
+        "start"
+    } else if cfg!(macos) {
+        "open"
+    } else {
+        "xdg-open"
+    };
+
     App::new("fuzzy-pdf")
         .version(crate_version!())
         .author("MarioJim <mario.emilio.j@gmail.com>")
@@ -14,7 +22,7 @@ pub fn get_app() -> clap::App<'static> {
         .arg(
             Arg::new("COMMAND")
                 .about("The command to execute when an item has been selected")
-                .default_value("xdg-open")
+                .default_value(default_exec)
                 .index(2),
         )
         .arg(

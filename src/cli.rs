@@ -36,7 +36,7 @@ pub fn get_app() -> clap::App<'static> {
         .arg(
             Arg::new("hidden")
                 .about("Search hidden files also")
-                .short('h')
+                .short('H')
                 .long("hidden"),
         )
 }

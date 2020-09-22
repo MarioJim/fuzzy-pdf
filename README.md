@@ -4,8 +4,8 @@ Fuzzy finder for a collection of pdf files. Based on [bellecp/fast-p](https://gi
 
 ## Dependencies
 
-- poppler for `pdftotext`
-- a program to open the pdf file
+- `libpoppler` for extracting the text from pdfs
+- `grep`
 
 ## Usage
 

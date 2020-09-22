@@ -52,7 +52,7 @@ fn main() {
 
     let selected_items = Skim::run_with(&skim_options, Some(rx_item))
         .map(|elem| elem.selected_items)
-        .unwrap_or_else(|| Vec::new());
+        .unwrap_or_else(Vec::new);
 
     // TODO: Implement the possibility to inject a complex command like
     // https://github.com/lotabout/skim/blob/master/src/util.rs#L332

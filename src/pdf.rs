@@ -2,8 +2,8 @@ use std::borrow::Cow;
 use std::convert::TryFrom;
 use std::ffi::OsString;
 use std::fmt;
-use std::process::Command;
 
+use poppler::PopplerDocument;
 use regex::Regex;
 use skim::{AnsiString, SkimItem};
 
@@ -24,49 +24,45 @@ impl SkimItem for PDFContent {
 }
 
 impl TryFrom<OsString> for PDFContent {
-    type Error = (PDFToTextError, OsString);
+    type Error = (PopplerError, OsString);
 
     fn try_from(filename: OsString) -> Result<Self, Self::Error> {
-        let pdftotext_result = match Command::new("pdftotext")
-            .arg("-nopgbrk")
-            .arg(&filename)
-            .arg("-")
-            .output()
-        {
-            Ok(out) => out.stdout,
-            Err(_) => return Err((PDFToTextError::FailedToExecute, filename)),
+        let pdf_doc = match PopplerDocument::new_from_file(&filename, "") {
+            Ok(pdf_doc) => pdf_doc,
+            Err(_) => return Err((PopplerError::NotAPDF, filename)),
         };
 
-        let content = match String::from_utf8(pdftotext_result) {
-            Ok(content) => content,
-            Err(_) => return Err((PDFToTextError::FailedToCreateString, filename)),
-        };
+        let mut content = String::new();
+        (0..pdf_doc.get_n_pages())
+            .filter_map(|page_idx| pdf_doc.get_page(page_idx))
+            .for_each(|page| {
+                if let Some(text) = page.get_text() {
+                    content.push('\n');
+                    content.push_str(text);
+                }
+            });
 
         lazy_static! {
             static ref ONLY_WHITESPACE: Regex = Regex::new(r"^\s*$").unwrap();
         }
         if ONLY_WHITESPACE.is_match(&content) {
-            Err((PDFToTextError::EmptyFile, filename))
+            Err((PopplerError::EmptyFile, filename))
         } else {
             Ok(PDFContent { filename, content })
         }
     }
 }
 
-pub enum PDFToTextError {
-    FailedToExecute,
-    FailedToCreateString,
+pub enum PopplerError {
+    NotAPDF,
     EmptyFile,
 }
 
-impl fmt::Debug for PDFToTextError {
+impl fmt::Debug for PopplerError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            PDFToTextError::FailedToExecute => write!(f, "pdftotext binary failed to execute"),
-            PDFToTextError::FailedToCreateString => {
-                write!(f, "failed to create a string from pdftotext output")
-            }
-            PDFToTextError::EmptyFile => write!(f, "no text could be recognized from this file"),
+            PopplerError::NotAPDF => write!(f, "pdftotext binary failed to execute"),
+            PopplerError::EmptyFile => write!(f, "no text could be recognized from this file"),
         }
     }
 }

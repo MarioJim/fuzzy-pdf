@@ -2,9 +2,14 @@ use std::borrow::Cow;
 use std::convert::TryFrom;
 use std::ffi::OsString;
 use std::fmt;
+use std::sync::atomic::Ordering;
 
+use grep::printer::{ColorSpecs, StandardBuilder};
+use grep::regex::RegexMatcherBuilder;
+use grep::searcher::SearcherBuilder;
 use poppler::PopplerDocument;
-use skim::{AnsiString, SkimItem};
+use skim::{AnsiString, ItemPreview, Previewer, SkimItem};
+use termcolor::Ansi;
 
 #[derive(Debug)]
 pub struct PDFContent {
@@ -14,11 +19,33 @@ pub struct PDFContent {
 
 impl SkimItem for PDFContent {
     fn display(&self) -> Cow<AnsiString> {
-        Cow::Owned(self.content.as_str().into())
+        Cow::Owned(self.filename.to_str().unwrap().into())
     }
 
     fn text(&self) -> Cow<str> {
         Cow::Borrowed(&self.content)
+    }
+
+    fn preview(&self, previewer: &Previewer) -> ItemPreview {
+        let matcher = RegexMatcherBuilder::new()
+            .case_smart(true)
+            .build(previewer.prev_query.as_ref().unwrap())
+            .unwrap();
+        let width = previewer.width.load(Ordering::Relaxed) as u64;
+        let mut printer = StandardBuilder::new()
+            .stats(false)
+            .color_specs(ColorSpecs::default_with_color())
+            .max_columns(Some(width))
+            .max_columns_preview(true)
+            .build(Ansi::new(vec![]));
+        let mut searcher = SearcherBuilder::new()
+            .line_number(false)
+            .after_context(3)
+            .before_context(3)
+            .build();
+        let _ = searcher.search_slice(&matcher, &self.content.as_bytes(), printer.sink(&matcher));
+
+        ItemPreview::AnsiText(String::from_utf8(printer.into_inner().into_inner()).unwrap())
     }
 }
 

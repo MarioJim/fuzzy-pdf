@@ -5,17 +5,16 @@ Fuzzy finder for a collection of pdf files. Based on [bellecp/fast-p](https://gi
 ## Dependencies
 
 - `libpoppler` for extracting the text from pdfs
-- `grep`
 
 ## Usage
 
 ```
-fuzzy-pdf 0.2.0
+fuzzy-pdf 0.3.0
 MarioJim <mario.emilio.j@gmail.com>
 Fuzzy finder for a collection of pdf files
 
 USAGE:
-    fuzzy-pdf [FLAGS] [OPTIONS] [ARGS]
+    fuzzy-pdf [FLAGS] [ARGS]
 
 ARGS:
     <PATH>

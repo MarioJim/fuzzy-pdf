@@ -43,15 +43,11 @@ fn main() {
         });
     drop(tx_item);
 
-    let preview_cmd = format!(
-        "echo {{}} | grep --ignore-case --context={} --color=always {{q}}",
-        matches.value_of("context").unwrap()
-    );
     let skim_options = SkimOptionsBuilder::default()
         .reverse(true)
         .exact(true)
         .preview_window(Some("down:80%"))
-        .preview(Some(&preview_cmd))
+        .preview(Some(""))
         .build()
         .unwrap();
 

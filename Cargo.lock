@@ -402,7 +402,7 @@ dependencies = [
 
 [[package]]
 name = "fuzzy-pdf"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "clap 3.0.0-beta.2",
  "grep",
@@ -411,6 +411,7 @@ dependencies = [
  "poppler",
  "regex",
  "skim",
+ "termcolor",
 ]
 
 [[package]]
@@ -927,8 +928,7 @@ checksum = "7fdf1b9db47230893d76faad238fd6097fd6d6a9245cd7a4d90dbd639536bbd2"
 [[package]]
 name = "skim"
 version = "0.8.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "58680f60cf72d62e266d2ebc9ec6c071083acaf1ac16eb972f2d4b3d454ef21a"
+source = "git+https://github.com/MarioJim/skim?branch=expose-previewer#31386e4c6e460dbeb33cd20d226207cb4564d6c0"
 dependencies = [
  "bitflags",
  "chrono",

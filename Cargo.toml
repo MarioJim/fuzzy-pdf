@@ -1,6 +1,6 @@
 [package]
 name = "fuzzy-pdf"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["MarioJim <mario.emilio.j@gmail.com>"]
 edition = "2018"
 description = "Fuzzy finder for a collection of pdf files"
@@ -14,4 +14,5 @@ lazy_static = "1.4.0"
 jwalk = "0.5"
 poppler = "0.3"
 regex = "1"
-skim = "0.8.2"
+skim = { git = "https://github.com/MarioJim/skim", branch = "expose-previewer" }
+termcolor = "1.1.0"

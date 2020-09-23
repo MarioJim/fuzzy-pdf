@@ -79,7 +79,7 @@ pub enum PopplerError {
 impl fmt::Debug for PopplerError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            PopplerError::NotAPDF => write!(f, "pdftotext binary failed to execute"),
+            PopplerError::NotAPDF => write!(f, "file couldn't be read as a pdf"),
             PopplerError::EmptyFile => write!(f, "no text could be recognized from this file"),
         }
     }

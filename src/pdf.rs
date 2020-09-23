@@ -58,15 +58,10 @@ impl TryFrom<OsString> for PDFContent {
             Err(_) => return Err((PopplerError::NotAPDF, filename)),
         };
 
-        let mut content = String::new();
-        (0..pdf_doc.get_n_pages())
+        let content: String = (0..pdf_doc.get_n_pages())
             .filter_map(|page_idx| pdf_doc.get_page(page_idx))
-            .for_each(|page| {
-                if let Some(text) = page.get_text() {
-                    content.push('\n');
-                    content.push_str(text);
-                }
-            });
+            .filter_map(|page| page.get_text().map(String::from))
+            .collect();
 
         if content.chars().all(|ch| ch.is_whitespace()) {
             Err((PopplerError::EmptyFile, filename))

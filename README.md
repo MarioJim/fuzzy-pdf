@@ -4,7 +4,7 @@ Fuzzy finder for a collection of pdf files. Based on [bellecp/fast-p](https://gi
 
 ## Dependencies
 
-- `libpoppler` for extracting the text from pdfs
+- `libpoppler-glib` for extracting the text from pdfs
 
 ## Usage
 
@@ -59,7 +59,7 @@ Run `fuzzy-pdf --help` for more information on options.
 
 ## Todo
 
-- [ ] Implement preview using `ripgrep` as a library
+- [x] Implement preview using `ripgrep` as a library
 - [x] Implement way to inject arguments to the provided command
 - [ ] Add documentation
 - [ ] Add tests

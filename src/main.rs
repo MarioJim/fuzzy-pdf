@@ -47,6 +47,7 @@ fn main() {
         .reverse(true)
         .exact(true)
         .no_hscroll(true)
+        // .no_highlight(true)
         .preview_window(Some("down:80%"))
         .preview(Some(""))
         .build()

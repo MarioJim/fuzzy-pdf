@@ -38,6 +38,6 @@ Run `fuzzy-pdf -h` for more information on options.
 ## Todo
 
 - [ ] Implement preview using `ripgrep` as a library
-- [ ] Implement way to inject arguments to the provided command
+- [x] Implement way to inject arguments to the provided command
 - [ ] Add documentation
 - [ ] Add tests

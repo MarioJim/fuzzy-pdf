@@ -24,6 +24,7 @@ ARGS:
 FLAGS:
     -h, --help       Prints help information
     -H, --hidden     Search hidden files also
+    -q, --quiet      Omit printing error messages
     -V, --version    Prints version information
 
 OPTIONS:

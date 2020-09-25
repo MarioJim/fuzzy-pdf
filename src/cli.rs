@@ -39,4 +39,10 @@ pub fn get_app() -> clap::App<'static> {
                 .short('H')
                 .long("hidden"),
         )
+        .arg(
+            Arg::new("quiet")
+                .about("Omit printing error messages")
+                .short('q')
+                .long("quiet"),
+        )
 }

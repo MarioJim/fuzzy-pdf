@@ -15,6 +15,7 @@ use action::Action;
 
 fn main() {
     let matches = cli::get_app().get_matches();
+    let quiet_mode = matches.is_present("quiet");
     let (tx_item, rx_item): (SkimItemSender, SkimItemReceiver) = unbounded();
 
     WalkDir::new(matches.value_of("PATH").unwrap())
@@ -31,7 +32,9 @@ fn main() {
         .filter_map(|pdf_path| match pdf::PDFContent::try_from(pdf_path) {
             Ok(pdf_content) => Some(pdf_content),
             Err((error, filename)) => {
-                println!("{:?}: {:?}", filename, error);
+                if !quiet_mode {
+                    println!("{:?}: {:?}", filename, error);
+                }
                 None
             }
         })

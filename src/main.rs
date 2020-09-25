@@ -7,8 +7,11 @@ use jwalk::WalkDir;
 use skim::prelude::{unbounded, SkimOptionsBuilder};
 use skim::{Skim, SkimItemReceiver, SkimItemSender};
 
+/// `Action` and its implementations
 mod action;
+/// `clap` configuration
 mod cli;
+/// `PDFContent` and its implementations
 mod pdf;
 
 use action::Action;
@@ -31,9 +34,9 @@ fn main() {
         })
         .filter_map(|pdf_path| match pdf::PDFContent::try_from(pdf_path) {
             Ok(pdf_content) => Some(pdf_content),
-            Err((error, filename)) => {
+            Err((error, file_path)) => {
                 if !quiet_mode {
-                    println!("{:?}: {:?}", filename, error);
+                    println!("{:?}: {:?}", file_path, error);
                 }
                 None
             }

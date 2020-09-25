@@ -56,5 +56,5 @@ Run `fuzzy-pdf --help` for more information on options.
 
 - [x] Implement preview using `ripgrep` as a library
 - [x] Implement way to inject arguments to the provided command
-- [ ] Add documentation
+- [x] Add documentation
 - [ ] Add tests

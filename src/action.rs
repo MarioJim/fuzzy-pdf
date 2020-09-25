@@ -7,12 +7,14 @@ use skim::SkimOutput;
 
 use crate::pdf;
 
+/// The different options to do after selecting an item
 pub enum Action {
     PrintResult,
     RunCommand(String),
 }
 
 impl Action {
+    /// Creates an `Action` from clap's matches
     pub fn from_matches(matches: &ArgMatches) -> Self {
         match matches.value_of("COMMAND").unwrap().trim() {
             "-" => Action::PrintResult,
@@ -20,6 +22,7 @@ impl Action {
         }
     }
 
+    /// Executes (and consumes) an Action
     pub fn execute(self, arguments: SkimOutput) {
         match self {
             Action::PrintResult => {
@@ -34,6 +37,7 @@ impl Action {
         }
     }
 
+    /// Injects arguments from `SkimOutput` into a given string
     fn inject_arguments(self, arguments: SkimOutput) -> String {
         let starting_cmd = match self {
             Action::PrintResult => String::from("{}"),
@@ -46,7 +50,7 @@ impl Action {
             .as_any()
             .downcast_ref::<pdf::PDFContent>()
             .unwrap()
-            .filename
+            .file_path
             .to_str()
             .unwrap();
         let query = arguments.query.as_str();

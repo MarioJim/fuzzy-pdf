@@ -1,5 +1,6 @@
 use clap::{crate_version, App, Arg};
 
+/// Creates a static clap application for parsing the arguments
 pub fn get_app() -> clap::App<'static> {
     let default_exec = if cfg!(windows) {
         "start"

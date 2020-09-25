@@ -10,6 +10,7 @@ use poppler::PopplerDocument;
 use skim::{AnsiString, DisplayContext, ItemPreview, PreviewContext, SkimItem};
 use termcolor::Ansi;
 
+/// Maps a file path to its text content
 #[derive(Debug)]
 pub struct PDFContent {
     pub file_path: OsString,
@@ -17,14 +18,18 @@ pub struct PDFContent {
 }
 
 impl SkimItem for PDFContent {
+    /// Returns the file path as the entry to be displayed in the item list
     fn display(&self, _: DisplayContext) -> AnsiString {
         self.file_path.as_os_str().to_str().unwrap().into()
     }
 
+    /// Returns the text contect as the text to be searched on
     fn text(&self) -> Cow<str> {
         Cow::Borrowed(&self.content)
     }
 
+    /// Using `ripgrep` internal components, prints a preview of the content
+    /// that matches the query with a context of 3 lines before and after
     fn preview(&self, context: PreviewContext) -> ItemPreview {
         let matcher = RegexMatcherBuilder::new()
             .case_smart(true)
@@ -48,6 +53,7 @@ impl SkimItem for PDFContent {
     }
 }
 
+/// Tries to read the pdf's text content using poppler-rs given the file path
 impl TryFrom<OsString> for PDFContent {
     type Error = (PopplerError, OsString);
 
@@ -70,8 +76,11 @@ impl TryFrom<OsString> for PDFContent {
     }
 }
 
+/// Errors that can occur while parsing the pdf file
 pub enum PopplerError {
+    /// Poppler couldn't recognize the file as a PDF document
     NotAPDF,
+    /// Poppler returned either an empty string or only whitespace chararcters
     EmptyFile,
 }
 

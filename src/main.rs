@@ -7,8 +7,11 @@ use jwalk::WalkDir;
 use skim::prelude::{unbounded, SkimOptionsBuilder};
 use skim::{Skim, SkimItemReceiver, SkimItemSender};
 
+/// `Action` and its implementations
 mod action;
+/// `clap` configuration
 mod cli;
+/// `PDFContent` and its implementations
 mod pdf;
 
 fn main() {

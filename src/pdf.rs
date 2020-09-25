@@ -4,7 +4,6 @@ use std::ffi::OsString;
 use std::fmt;
 
 use poppler::PopplerDocument;
-use regex::Regex;
 use skim::{AnsiString, SkimItem};
 
 #[derive(Debug)]
@@ -42,10 +41,7 @@ impl TryFrom<OsString> for PDFContent {
                 }
             });
 
-        lazy_static! {
-            static ref ONLY_WHITESPACE: Regex = Regex::new(r"^\s*$").unwrap();
-        }
-        if ONLY_WHITESPACE.is_match(&content) {
+        if content.chars().all(|ch| ch.is_whitespace()) {
             Err((PopplerError::EmptyFile, filename))
         } else {
             Ok(PDFContent { filename, content })

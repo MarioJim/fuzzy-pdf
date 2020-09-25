@@ -22,10 +22,17 @@ ARGS:
             The path to recursively search for pdf files [default: .]
     <COMMAND>
             After selecting a file, use this option to either:
-             - Pass a '-' to print the file path to stdout (pair this with -q option for better
-            results)
-             - Pass a string with placeholders to be executed. You can use {} or {f} to pass the
-            file path, and {q} for the query typed into the search box. [default: xdg-open]
+             - Pass a '-' to print the file path to stdout (pair this
+            with -q option for better results)
+             - Pass a string with placeholders to be executed. You can
+            use {} or {f} to pass the file path, and {q} for the query
+            typed into the search box. If you don't use any placeholders,
+            the string will be appended with the file path and executed.
+
+            If you don't pass this argument, the program will open the
+            pdf in the system's default pdf viewer, using 'start' for
+            Windows, 'open' for MacOS, and 'xdg-open' for anything else.
+            [default: xdg-open]
 
 FLAGS:
     -h, --help

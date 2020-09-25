@@ -54,18 +54,21 @@ impl Action {
         lazy_static! {
             static ref RE_FIELDS: Regex = Regex::new(r"(\{ *[qf]? *\})").unwrap();
         }
-        let injected_cmd = RE_FIELDS.replace_all(&starting_cmd, |caps: &Captures| {
-            let range = &caps[1];
-            let range = &range[1..range.len() - 1];
-            let range = range.trim();
-            let replacement = match range {
-                "" | "f" => file_path,
-                "q" => query,
-                _ => "",
-            };
-            format!("'{}'", replacement)
-        });
-
-        String::from(injected_cmd)
+        if RE_FIELDS.is_match(&starting_cmd) {
+            let injected_cmd = RE_FIELDS.replace_all(&starting_cmd, |caps: &Captures| {
+                let range = &caps[1];
+                let range = &range[1..range.len() - 1];
+                let range = range.trim();
+                let replacement = match range {
+                    "" | "f" => file_path,
+                    "q" => query,
+                    _ => "",
+                };
+                format!("'{}'", replacement)
+            });
+            String::from(injected_cmd)
+        } else {
+            format!("{} '{}'", starting_cmd, file_path)
+        }
     }
 }

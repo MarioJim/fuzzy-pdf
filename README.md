@@ -18,23 +18,38 @@ USAGE:
     fuzzy-pdf [FLAGS] [OPTIONS] [ARGS]
 
 ARGS:
-    <PATH>       The path to recursively search for pdf files [default: .]
-    <COMMAND>    The command to execute when an item has been selected [default: xdg-open]
+    <PATH>
+            The path to recursively search for pdf files [default: .]
+    <COMMAND>
+            After selecting a file, use this option to either:
+             - Pass a '-' to print the file path to stdout (pair this with -q option for better
+            results)
+             - Pass a string with placeholders to be executed. You can use {} or {f} to pass the
+            file path, and {q} for the query typed into the search box. [default: xdg-open]
 
 FLAGS:
-    -h, --help       Prints help information
-    -H, --hidden     Search hidden files also
-    -q, --quiet      Omit printing error messages
-    -V, --version    Prints version information
+    -h, --help
+            Prints help information
+
+    -H, --hidden
+            Search hidden files also
+
+    -q, --quiet
+            Omit printing error messages
+
+    -V, --version
+            Prints version information
+
 
 OPTIONS:
-    -c, --context <context>    Surrounding lines to show in the preview [default: 3]
+    -c, --context <context>
+            Surrounding lines to show in the preview [default: 3]
 ```
 
 - If you don't specify a path, it will default to the current folder.
 - If you don't specify a command, the selected pdf will be opened with `start` on Windows, `open` in MacOS and `xdg-open` in other OSs.
 
-Run `fuzzy-pdf -h` for more information on options.
+Run `fuzzy-pdf --help` for more information on options.
 
 ## Todo
 

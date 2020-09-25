@@ -52,14 +52,14 @@ impl Action {
         let query = arguments.query.as_str();
 
         lazy_static! {
-            static ref RE_FIELDS: Regex = Regex::new(r"(\{ *[qp]? *\})").unwrap();
+            static ref RE_FIELDS: Regex = Regex::new(r"(\{ *[qf]? *\})").unwrap();
         }
         let injected_cmd = RE_FIELDS.replace_all(&starting_cmd, |caps: &Captures| {
             let range = &caps[1];
             let range = &range[1..range.len() - 1];
             let range = range.trim();
             let replacement = match range {
-                "" | "p" => file_path,
+                "" | "f" => file_path,
                 "q" => query,
                 _ => "",
             };

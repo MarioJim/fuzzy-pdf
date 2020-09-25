@@ -45,11 +45,6 @@ FLAGS:
 
     -V, --version
             Prints version information
-
-
-OPTIONS:
-    -c, --context <context>
-            Surrounding lines to show in the preview [default: 3]
 ```
 
 - If you don't specify a path, it will default to the current folder.

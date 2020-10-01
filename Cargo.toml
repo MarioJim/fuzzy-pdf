@@ -14,5 +14,5 @@ lazy_static = "1.4.0"
 jwalk = "0.5"
 poppler = "0.3"
 regex = "1"
-skim = { git = "https://github.com/MarioJim/skim", branch = "expose-previewer" }
+skim = { git = "https://github.com/MarioJim/skim" }
 termcolor = "1.1.0"

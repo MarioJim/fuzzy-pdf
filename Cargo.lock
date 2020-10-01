@@ -928,7 +928,7 @@ checksum = "7fdf1b9db47230893d76faad238fd6097fd6d6a9245cd7a4d90dbd639536bbd2"
 [[package]]
 name = "skim"
 version = "0.8.2"
-source = "git+https://github.com/MarioJim/skim?branch=expose-previewer#31386e4c6e460dbeb33cd20d226207cb4564d6c0"
+source = "git+https://github.com/MarioJim/skim#0d056be43f8dced496b0902c72d947a7006c8d03"
 dependencies = [
  "bitflags",
  "chrono",

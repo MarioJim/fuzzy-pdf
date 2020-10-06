@@ -3,48 +3,69 @@ use std::convert::TryFrom;
 use std::ffi::OsString;
 use std::fmt;
 
+use grep::printer::{ColorSpecs, StandardBuilder};
+use grep::regex::RegexMatcherBuilder;
+use grep::searcher::SearcherBuilder;
 use poppler::PopplerDocument;
-use skim::{AnsiString, SkimItem};
+use skim::{AnsiString, DisplayContext, ItemPreview, PreviewContext, SkimItem};
+use termcolor::Ansi;
 
 #[derive(Debug)]
 pub struct PDFContent {
-    pub filename: OsString,
+    pub file_path: OsString,
     pub content: String,
 }
 
 impl SkimItem for PDFContent {
-    fn display(&self) -> Cow<AnsiString> {
-        Cow::Owned(self.content.as_str().into())
+    fn display(&self, _: DisplayContext) -> AnsiString {
+        self.file_path.as_os_str().to_str().unwrap().into()
     }
 
     fn text(&self) -> Cow<str> {
         Cow::Borrowed(&self.content)
+    }
+
+    fn preview(&self, context: PreviewContext) -> ItemPreview {
+        let matcher = RegexMatcherBuilder::new()
+            .case_smart(true)
+            .build(context.query)
+            .unwrap();
+        let width = context.width as u64;
+        let mut printer = StandardBuilder::new()
+            .stats(false)
+            .color_specs(ColorSpecs::default_with_color())
+            .max_columns(Some(width))
+            .max_columns_preview(true)
+            .build(Ansi::new(vec![]));
+        let mut searcher = SearcherBuilder::new()
+            .line_number(false)
+            .after_context(3)
+            .before_context(3)
+            .build();
+        let _ = searcher.search_slice(&matcher, &self.content.as_bytes(), printer.sink(&matcher));
+
+        ItemPreview::AnsiText(String::from_utf8(printer.into_inner().into_inner()).unwrap())
     }
 }
 
 impl TryFrom<OsString> for PDFContent {
     type Error = (PopplerError, OsString);
 
-    fn try_from(filename: OsString) -> Result<Self, Self::Error> {
-        let pdf_doc = match PopplerDocument::new_from_file(&filename, "") {
+    fn try_from(file_path: OsString) -> Result<Self, Self::Error> {
+        let pdf_doc = match PopplerDocument::new_from_file(&file_path, "") {
             Ok(pdf_doc) => pdf_doc,
-            Err(_) => return Err((PopplerError::NotAPDF, filename)),
+            Err(_) => return Err((PopplerError::NotAPDF, file_path)),
         };
 
-        let mut content = String::new();
-        (0..pdf_doc.get_n_pages())
+        let content: String = (0..pdf_doc.get_n_pages())
             .filter_map(|page_idx| pdf_doc.get_page(page_idx))
-            .for_each(|page| {
-                if let Some(text) = page.get_text() {
-                    content.push('\n');
-                    content.push_str(text);
-                }
-            });
+            .filter_map(|page| page.get_text().map(String::from))
+            .collect();
 
         if content.chars().all(|ch| ch.is_whitespace()) {
-            Err((PopplerError::EmptyFile, filename))
+            Err((PopplerError::EmptyFile, file_path))
         } else {
-            Ok(PDFContent { filename, content })
+            Ok(PDFContent { file_path, content })
         }
     }
 }

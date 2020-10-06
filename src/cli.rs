@@ -27,14 +27,6 @@ pub fn get_app() -> clap::App<'static> {
                 .index(2),
         )
         .arg(
-            Arg::new("context")
-                .about("Surrounding lines to show in the preview")
-                .short('c')
-                .long("context")
-                .default_value("3")
-                .takes_value(true),
-        )
-        .arg(
             Arg::new("hidden")
                 .about("Search hidden files also")
                 .short('H')

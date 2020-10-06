@@ -46,7 +46,7 @@ impl Action {
             .as_any()
             .downcast_ref::<pdf::PDFContent>()
             .unwrap()
-            .filename
+            .file_path
             .to_str()
             .unwrap();
         let query = arguments.query.as_str();

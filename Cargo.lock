@@ -54,6 +54,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3441f0f7b02788e948e47f457ca01f1d7e6d92c693bc132c22b087d3141c03ff"
 
 [[package]]
+name = "beef"
+version = "0.4.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "474a626a67200bd107d44179bb3d4fc61891172d11696609264589be6a0e6a43"
+
+[[package]]
 name = "bitflags"
 version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -303,6 +309,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "defer-drop"
+version = "1.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "18ae055245e14ed411f56dddf2a78caae87c25d9d6a18fb61f398a596cad77b4"
+dependencies = [
+ "crossbeam-channel",
+ "once_cell",
+]
+
+[[package]]
 name = "derive_builder"
 version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -393,16 +409,16 @@ checksum = "3f9eec918d3f24069decb9af1554cad7c880e2da24a9afd88aca000531ab82c1"
 
 [[package]]
 name = "fuzzy-matcher"
-version = "0.3.5"
+version = "0.3.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cda28c4acb13182d935e0ab6bc12329d1d22134d69801d0836d1ae4b47054f2a"
+checksum = "54614a3312934d066701a80f20f15fa3b56d67ac7722b39eea5b4c9dd1d66c94"
 dependencies = [
  "thread_local",
 ]
 
 [[package]]
 name = "fuzzy-pdf"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "clap 3.0.0-beta.2",
  "grep",
@@ -411,6 +427,7 @@ dependencies = [
  "poppler",
  "regex",
  "skim",
+ "termcolor",
 ]
 
 [[package]]
@@ -716,6 +733,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "once_cell"
+version = "1.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "260e51e7efe62b592207e9e13a68e43692a7a279171d6ba57abd208bf23645ad"
+
+[[package]]
 name = "os_str_bytes"
 version = "2.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -927,13 +950,14 @@ checksum = "7fdf1b9db47230893d76faad238fd6097fd6d6a9245cd7a4d90dbd639536bbd2"
 [[package]]
 name = "skim"
 version = "0.8.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "58680f60cf72d62e266d2ebc9ec6c071083acaf1ac16eb972f2d4b3d454ef21a"
+source = "git+https://github.com/lotabout/skim#a4957638182fded49b6857ef620afc7579258f3b"
 dependencies = [
+ "beef",
  "bitflags",
  "chrono",
  "clap 2.33.3",
  "crossbeam",
+ "defer-drop",
  "derive_builder",
  "env_logger",
  "fuzzy-matcher",

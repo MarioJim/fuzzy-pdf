@@ -11,8 +11,6 @@ mod action;
 mod cli;
 mod pdf;
 
-use action::Action;
-
 fn main() {
     let matches = cli::get_app().get_matches();
     let quiet_mode = matches.is_present("quiet");
@@ -31,9 +29,9 @@ fn main() {
         })
         .filter_map(|pdf_path| match pdf::PDFContent::try_from(pdf_path) {
             Ok(pdf_content) => Some(pdf_content),
-            Err((error, filename)) => {
+            Err((error, file_path)) => {
                 if !quiet_mode {
-                    println!("{:?}: {:?}", filename, error);
+                    println!("{:?}: {:?}", file_path, error);
                 }
                 None
             }
@@ -43,20 +41,17 @@ fn main() {
         });
     drop(tx_item);
 
-    let preview_cmd = format!(
-        "echo {{}} | grep --ignore-case --context={} --color=always {{q}}",
-        matches.value_of("context").unwrap()
-    );
     let skim_options = SkimOptionsBuilder::default()
         .reverse(true)
         .exact(true)
+        .no_hscroll(true)
         .preview_window(Some("down:80%"))
-        .preview(Some(&preview_cmd))
+        .preview(Some(""))
         .build()
         .unwrap();
 
     let arguments =
         Skim::run_with(&skim_options, Some(rx_item)).unwrap_or_else(|| std::process::exit(130));
 
-    Action::from_matches(&matches).execute(arguments);
+    action::Action::from_matches(&matches).execute(arguments);
 }

@@ -4,18 +4,17 @@ Fuzzy finder for a collection of pdf files. Based on [bellecp/fast-p](https://gi
 
 ## Dependencies
 
-- `libpoppler` for extracting the text from pdfs
-- `grep`
+- `libpoppler-glib` for extracting the text from pdfs
 
 ## Usage
 
 ```
-fuzzy-pdf 0.2.0
+fuzzy-pdf 0.3.0
 MarioJim <mario.emilio.j@gmail.com>
 Fuzzy finder for a collection of pdf files
 
 USAGE:
-    fuzzy-pdf [FLAGS] [OPTIONS] [ARGS]
+    fuzzy-pdf [FLAGS] [ARGS]
 
 ARGS:
     <PATH>
@@ -46,11 +45,6 @@ FLAGS:
 
     -V, --version
             Prints version information
-
-
-OPTIONS:
-    -c, --context <context>
-            Surrounding lines to show in the preview [default: 3]
 ```
 
 - If you don't specify a path, it will default to the current folder.
@@ -60,7 +54,7 @@ Run `fuzzy-pdf --help` for more information on options.
 
 ## Todo
 
-- [ ] Implement preview using `ripgrep` as a library
+- [x] Implement preview using `ripgrep` as a library
 - [x] Implement way to inject arguments to the provided command
 - [ ] Add documentation
 - [ ] Add tests

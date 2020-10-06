@@ -32,7 +32,7 @@ impl Action {
             Action::RunCommand(_) => {
                 let shell = env::var("SHELL").unwrap_or_else(|_| "sh".to_string());
                 let cmd_str = self.inject_arguments(arguments);
-                let _ = Command::new(shell).arg("-c").arg(cmd_str).status();
+                let _ = Command::new(shell).arg("-c").arg(cmd_str).spawn();
             }
         }
     }
@@ -55,11 +55,9 @@ impl Action {
             .unwrap();
         let query = arguments.query.as_str();
 
-        lazy_static! {
-            static ref RE_FIELDS: Regex = Regex::new(r"(\{ *[qf]? *\})").unwrap();
-        }
-        if RE_FIELDS.is_match(&starting_cmd) {
-            let injected_cmd = RE_FIELDS.replace_all(&starting_cmd, |caps: &Captures| {
+        let re_fields = Regex::new(r"(\{ *[qf]? *\})").unwrap();
+        if re_fields.is_match(&starting_cmd) {
+            let injected_cmd = re_fields.replace_all(&starting_cmd, |caps: &Captures| {
                 let range = &caps[1];
                 let range = &range[1..range.len() - 1];
                 let range = range.trim();

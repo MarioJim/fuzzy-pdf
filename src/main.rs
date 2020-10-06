@@ -1,5 +1,5 @@
 use std::convert::TryFrom;
-use std::sync::Arc;
+use std::sync::{Arc, RwLock};
 
 #[macro_use]
 extern crate lazy_static;
@@ -11,12 +11,19 @@ use skim::{Skim, SkimItemReceiver, SkimItemSender};
 mod action;
 /// `clap` configuration
 mod cli;
+/// `Config` struct and its impl
+mod config;
 /// `PDFContent` and its implementations
 mod pdf;
 
+lazy_static! {
+    /// Global configuration for the application
+    pub static ref CONFIG: RwLock<config::Config> = RwLock::new(config::Config::new());
+}
+
 fn main() {
     let matches = cli::get_app().get_matches();
-    let quiet_mode = matches.is_present("quiet");
+    CONFIG.write().unwrap().modify_with_argmatches(&matches);
     let (tx_item, rx_item): (SkimItemSender, SkimItemReceiver) = unbounded();
 
     WalkDir::new(matches.value_of("PATH").unwrap())
@@ -33,7 +40,7 @@ fn main() {
         .filter_map(|pdf_path| match pdf::PDFContent::try_from(pdf_path) {
             Ok(pdf_content) => Some(pdf_content),
             Err((error, file_path)) => {
-                if !quiet_mode {
+                if !CONFIG.read().unwrap().quiet {
                     println!("{:?}: {:?}", file_path, error);
                 }
                 None

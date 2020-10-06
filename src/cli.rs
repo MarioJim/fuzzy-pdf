@@ -34,6 +34,20 @@ pub fn get_app() -> clap::App<'static> {
                 .long("hidden"),
         )
         .arg(
+            Arg::new("context")
+                .about("Surrounding lines to show in the preview")
+                .short('c')
+                .long("context")
+                .takes_value(true),
+        )
+        .arg(
+            Arg::new("max-pages")
+                .about("Only parse documents with at most this number of pages. Pass '0' to parse documents with any number of pages")
+                .short('m')
+                .long("max-pages")
+                .takes_value(true),
+        )
+        .arg(
             Arg::new("quiet")
                 .about("Omit printing error messages")
                 .short('q')
@@ -41,10 +55,8 @@ pub fn get_app() -> clap::App<'static> {
         )
 }
 
-lazy_static! {
-    static ref COMMAND_LONG_ABOUT: &'static str = "After selecting a file, use this option to either:
+static COMMAND_LONG_ABOUT: &'static str = "After selecting a file, use this option to either:
  - Pass a '-' to print the file path to stdout (pair this with -q option for better results)
  - Pass a string with placeholders to be executed. You can use {} or {f} to pass the file path, and {q} for the query typed into the search box. If you don't use any placeholders, the string will be appended with the file path and executed.
 
 If you don't pass this argument, the program will open the pdf in the system's default pdf viewer, using 'start' for Windows, 'open' for MacOS, and 'xdg-open' for anything else.";
-}

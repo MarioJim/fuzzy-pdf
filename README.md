@@ -1,5 +1,8 @@
 # fuzzy-pdf
 
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/MarioJim/fuzzy-pdf/Continuous%20Integration)
+![GitHub last commit](https://img.shields.io/github/last-commit/MarioJim/fuzzy-pdf)
+
 Fuzzy finder for a collection of pdf files. Based on [bellecp/fast-p](https://github.com/bellecp/fast-p) but written in Rust and with less external dependencies.
 
 ## Dependencies
@@ -14,7 +17,7 @@ MarioJim <mario.emilio.j@gmail.com>
 Fuzzy finder for a collection of pdf files
 
 USAGE:
-    fuzzy-pdf [FLAGS] [ARGS]
+    fuzzy-pdf [FLAGS] [OPTIONS] [ARGS]
 
 ARGS:
     <PATH>
@@ -45,6 +48,14 @@ FLAGS:
 
     -V, --version
             Prints version information
+
+OPTIONS:
+    -c, --context <context>
+            Surrounding lines to show in the preview
+
+    -m, --max-pages <max-pages>
+            Only parse documents with at most this number of pages.
+            Pass '0' to parse documents with any number of pages
 ```
 
 - If you don't specify a path, it will default to the current folder.

@@ -42,10 +42,11 @@ impl SkimItem for PDFContent {
             .max_columns(Some(width))
             .max_columns_preview(true)
             .build(Ansi::new(vec![]));
+        let context = crate::CONFIG.read().unwrap().context;
         let mut searcher = SearcherBuilder::new()
             .line_number(false)
-            .after_context(3)
-            .before_context(3)
+            .after_context(context)
+            .before_context(context)
             .build();
         let _ = searcher.search_slice(&matcher, &self.content.as_bytes(), printer.sink(&matcher));
 
@@ -55,21 +56,27 @@ impl SkimItem for PDFContent {
 
 /// Tries to read the pdf's text content using poppler-rs given the file path
 impl TryFrom<OsString> for PDFContent {
-    type Error = (PopplerError, OsString);
+    type Error = (ParsingError, OsString);
 
     fn try_from(file_path: OsString) -> Result<Self, Self::Error> {
         let pdf_doc = match PopplerDocument::new_from_file(&file_path, "") {
             Ok(pdf_doc) => pdf_doc,
-            Err(_) => return Err((PopplerError::NotAPDF, file_path)),
+            Err(_) => return Err((ParsingError::NotAPDF, file_path)),
         };
 
-        let content: String = (0..pdf_doc.get_n_pages())
+        let num_pages = pdf_doc.get_n_pages();
+        let max_num_pages = crate::CONFIG.read().unwrap().max_pages;
+        if max_num_pages != 0 && max_num_pages < num_pages {
+            return Err((ParsingError::TooManyPages, file_path));
+        }
+
+        let content: String = (0..num_pages)
             .filter_map(|page_idx| pdf_doc.get_page(page_idx))
             .filter_map(|page| page.get_text().map(String::from))
             .collect();
 
         if content.chars().all(|ch| ch.is_whitespace()) {
-            Err((PopplerError::EmptyFile, file_path))
+            Err((ParsingError::EmptyFile, file_path))
         } else {
             Ok(PDFContent { file_path, content })
         }
@@ -77,18 +84,21 @@ impl TryFrom<OsString> for PDFContent {
 }
 
 /// Errors that can occur while parsing the pdf file
-pub enum PopplerError {
+pub enum ParsingError {
     /// Poppler couldn't recognize the file as a PDF document
     NotAPDF,
     /// Poppler returned either an empty string or only whitespace chararcters
     EmptyFile,
+    /// The PDF has more pages than permitted
+    TooManyPages,
 }
 
-impl fmt::Debug for PopplerError {
+impl fmt::Debug for ParsingError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            PopplerError::NotAPDF => write!(f, "file couldn't be read as a pdf"),
-            PopplerError::EmptyFile => write!(f, "no text could be recognized from this file"),
+            ParsingError::NotAPDF => write!(f, "file couldn't be read as a pdf"),
+            ParsingError::EmptyFile => write!(f, "no text could be recognized from this file"),
+            ParsingError::TooManyPages => write!(f, "has too many pages"),
         }
     }
 }

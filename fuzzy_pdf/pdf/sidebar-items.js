@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["ParsingError","Errors that can occur while parsing the pdf file"]],"struct":[["PDFContent","Maps a file path to its text content"]]});

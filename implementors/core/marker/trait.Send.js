@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["fuzzy_pdf"] = [{"text":"impl Send for CONFIG","synthetic":true,"types":[]},{"text":"impl Send for Action","synthetic":true,"types":[]},{"text":"impl Send for Config","synthetic":true,"types":[]},{"text":"impl Send for PDFContent","synthetic":true,"types":[]},{"text":"impl Send for ParsingError","synthetic":true,"types":[]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["Action","The different options to do after selecting an item"]]});

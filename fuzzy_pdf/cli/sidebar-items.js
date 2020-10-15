@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["get_app","Creates a static clap application for parsing the arguments"]],"static":[["COMMAND_LONG_ABOUT",""]]});

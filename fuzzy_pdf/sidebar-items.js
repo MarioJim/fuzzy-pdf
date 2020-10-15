@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["main",""]],"mod":[["action","`Action` and its implementations"],["cli","`clap` configuration"],["config","`Config` struct and its impl"],["pdf","`PDFContent` and its implementations"]],"struct":[["CONFIG","Global configuration for the application"]]});

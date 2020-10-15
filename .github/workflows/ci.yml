@@ -7,12 +7,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Pull repo
+      - name: Checkout repo
         uses: actions/checkout@v2
+
       - name: Install poppler
         run: sudo apt-get install libpoppler-glib-dev
+
       - name: Build
         run: cargo build --verbose
+
       - name: Run clippy
         uses: actions-rs/clippy-check@v1
         with:

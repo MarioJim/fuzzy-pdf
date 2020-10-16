@@ -65,7 +65,6 @@
 <span id="64">64</span>
 <span id="65">65</span>
 <span id="66">66</span>
-<span id="67">67</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">convert</span>::<span class="ident">TryFrom</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::{<span class="ident">Arc</span>, <span class="ident">RwLock</span>};
@@ -123,7 +122,6 @@
     <span class="kw">let</span> <span class="ident">skim_options</span> <span class="op">=</span> <span class="ident">SkimOptionsBuilder</span>::<span class="ident">default</span>()
         .<span class="ident">reverse</span>(<span class="bool-val">true</span>)
         .<span class="ident">exact</span>(<span class="bool-val">true</span>)
-        .<span class="ident">no_hscroll</span>(<span class="bool-val">true</span>)
         .<span class="ident">preview_window</span>(<span class="prelude-val">Some</span>(<span class="string">&quot;down:80%&quot;</span>))
         .<span class="ident">preview</span>(<span class="prelude-val">Some</span>(<span class="string">&quot;&quot;</span>))
         .<span class="ident">build</span>()

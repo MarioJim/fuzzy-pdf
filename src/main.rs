@@ -54,7 +54,6 @@ fn main() {
     let skim_options = SkimOptionsBuilder::default()
         .reverse(true)
         .exact(true)
-        .no_hscroll(true)
         .preview_window(Some("down:80%"))
         .preview(Some(""))
         .build()

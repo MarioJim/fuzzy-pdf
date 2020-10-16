@@ -6,13 +6,19 @@ pub struct Config {
     pub quiet: bool,
 }
 
-impl Config {
-    pub fn new() -> Self {
-        Config {
+impl Default for Config {
+    fn default() -> Self {
+        Self {
             context: 3,
             max_pages: 100,
             quiet: false,
         }
+    }
+}
+
+impl Config {
+    pub fn new() -> Self {
+        Self::default()
     }
 
     pub fn modify_with_argmatches(&mut self, matches: &ArgMatches) {

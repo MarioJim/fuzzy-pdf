@@ -1,6 +1,6 @@
 [package]
 name = "fuzzy-pdf"
-version = "0.3.1"
+version = "0.3.2"
 authors = ["MarioJim <mario.emilio.j@gmail.com>"]
 edition = "2018"
 description = "Fuzzy finder for a collection of pdf files"
@@ -14,5 +14,5 @@ lazy_static = "1.4.0"
 jwalk = "0.5"
 poppler = "0.3"
 regex = "1"
-skim = { git = "https://github.com/lotabout/skim" }
+skim = "0.9"
 termcolor = "1.1.0"

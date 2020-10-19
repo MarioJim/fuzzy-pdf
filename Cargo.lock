@@ -418,7 +418,7 @@ dependencies = [
 
 [[package]]
 name = "fuzzy-pdf"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "clap 3.0.0-beta.2",
  "grep",
@@ -949,8 +949,9 @@ checksum = "7fdf1b9db47230893d76faad238fd6097fd6d6a9245cd7a4d90dbd639536bbd2"
 
 [[package]]
 name = "skim"
-version = "0.8.2"
-source = "git+https://github.com/lotabout/skim#4a354cc652bd880bb2cadbcce70f585a13af1fd0"
+version = "0.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6f475d97ce061cb8b6f40815b006b35e637fd8f72ecff947705191795025b29b"
 dependencies = [
  "beef",
  "bitflags",
@@ -1071,9 +1072,9 @@ dependencies = [
 
 [[package]]
 name = "tuikit"
-version = "0.4.0"
+version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e9448ed0462551ce006a7037b2754f2c019777832453b3e777580ca2ffb2672d"
+checksum = "774a78215252087748ed6290f08652bc5c4e17d8fa40daa55c476228670ec186"
 dependencies = [
  "bitflags",
  "lazy_static",

@@ -12,7 +12,7 @@ Fuzzy finder for a collection of pdf files. Based on [bellecp/fast-p](https://gi
 ## Usage
 
 ```
-fuzzy-pdf 0.3.1
+fuzzy-pdf 0.3.2
 MarioJim <mario.emilio.j@gmail.com>
 Fuzzy finder for a collection of pdf files
 

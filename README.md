@@ -2,12 +2,27 @@
 
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/MarioJim/fuzzy-pdf/Continuous%20Integration)
 ![GitHub last commit](https://img.shields.io/github/last-commit/MarioJim/fuzzy-pdf)
+![AUR version](https://img.shields.io/aur/version/fuzzy-pdf)
 
 Fuzzy finder for a collection of pdf files. Based on [bellecp/fast-p](https://github.com/bellecp/fast-p) but written in Rust and with less external dependencies.
 
 ## Dependencies
 
 - `libpoppler-glib` for extracting the text from pdfs
+
+## Installation
+
+If you're an Arch Linux user, then you can install fuzzy-pdf from the [AUR](https://aur.archlinux.org/packages/fuzzy-pdf/):
+
+```
+$ yay -S fuzzy-pdf
+```
+
+You can also build it from source using cargo:
+
+```
+$ cargo build --release --locked
+```
 
 ## Usage
 
@@ -57,11 +72,6 @@ OPTIONS:
             Only parse documents with at most this number of pages.
             Pass '0' to parse documents with any number of pages
 ```
-
-- If you don't specify a path, it will default to the current folder.
-- If you don't specify a command, the selected pdf will be opened with `start` on Windows, `open` in MacOS and `xdg-open` in other OSs.
-
-Run `fuzzy-pdf --help` for more information on options.
 
 ## Todo
 

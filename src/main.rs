@@ -59,8 +59,14 @@ fn main() {
         .build()
         .unwrap();
 
-    let arguments =
-        Skim::run_with(&skim_options, Some(rx_item)).unwrap_or_else(|| std::process::exit(130));
+    match Skim::run_with(&skim_options, Some(rx_item)) {
+        Some(sk_output) => {
+            if sk_output.is_abort {
+                std::process::exit(130)
+            }
 
-    action::Action::from_matches(&matches).execute(arguments);
+            action::Action::from_matches(&matches).execute(sk_output);
+        }
+        None => std::process::exit(1),
+    }
 }

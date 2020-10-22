@@ -8,7 +8,6 @@ use skim::{
     prelude::{unbounded, SkimOptionsBuilder},
     Skim, SkimItemReceiver, SkimItemSender,
 };
-use walkdir::WalkDir;
 
 /// `Action` and its implementations
 mod action;
@@ -16,8 +15,14 @@ mod action;
 mod cli;
 /// `Config` struct and its implementations
 mod config;
+/// `FileIter` enum and its implementations
+mod file_iter;
 /// `PDFContent` and its implementations
 mod pdf;
+
+use action::Action;
+use file_iter::FileIter;
+use pdf::PDFContent;
 
 lazy_static! {
     /// Global configuration for the application
@@ -29,18 +34,10 @@ fn main() {
     CONFIG.write().unwrap().modify_with_argmatches(&matches);
     let (tx_item, rx_item): (SkimItemSender, SkimItemReceiver) = unbounded();
 
+    let path = matches.value_of("PATH").unwrap();
     let with_hidden_files = matches.is_present("hidden");
 
-    WalkDir::new(matches.value_of("PATH").unwrap())
-        .into_iter()
-        .filter_entry(move |entry| {
-            with_hidden_files
-                || !entry
-                    .file_name()
-                    .to_str()
-                    .map(|s| s.starts_with('.') && s != "." && s != "..")
-                    .unwrap_or(false)
-        })
+    FileIter::new(path, with_hidden_files)
         .par_bridge()
         .filter_map(|possible_entry| {
             let possible_pdf = possible_entry.ok()?.into_path();
@@ -50,7 +47,7 @@ fn main() {
                 None
             }
         })
-        .filter_map(|pdf_path| match pdf::PDFContent::try_from(pdf_path) {
+        .filter_map(|pdf_path| match PDFContent::try_from(pdf_path) {
             Ok(pdf_content) => Some(pdf_content),
             Err((error, file_path)) => {
                 if !CONFIG.read().unwrap().quiet {
@@ -77,7 +74,7 @@ fn main() {
                 std::process::exit(130)
             }
 
-            action::Action::from_matches(&matches).execute(sk_output);
+            Action::from_matches(&matches).execute(sk_output);
         }
         None => std::process::exit(1),
     }

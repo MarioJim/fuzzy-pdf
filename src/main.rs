@@ -38,7 +38,7 @@ fn main() {
                 || !entry
                     .file_name()
                     .to_str()
-                    .map(|s| s.starts_with("."))
+                    .map(|s| s.starts_with('.') && s != "." && s != "..")
                     .unwrap_or(false)
         })
         .par_bridge()

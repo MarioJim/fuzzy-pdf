@@ -3,15 +3,18 @@ use std::sync::{Arc, RwLock};
 
 #[macro_use]
 extern crate lazy_static;
-use jwalk::WalkDir;
-use skim::prelude::{unbounded, SkimOptionsBuilder};
-use skim::{Skim, SkimItemReceiver, SkimItemSender};
+use rayon::iter::{ParallelBridge, ParallelIterator};
+use skim::{
+    prelude::{unbounded, SkimOptionsBuilder},
+    Skim, SkimItemReceiver, SkimItemSender,
+};
+use walkdir::WalkDir;
 
 /// `Action` and its implementations
 mod action;
 /// `clap` configuration
 mod cli;
-/// `Config` struct and its impl
+/// `Config` struct and its implementations
 mod config;
 /// `PDFContent` and its implementations
 mod pdf;
@@ -26,16 +29,26 @@ fn main() {
     CONFIG.write().unwrap().modify_with_argmatches(&matches);
     let (tx_item, rx_item): (SkimItemSender, SkimItemReceiver) = unbounded();
 
+    let with_hidden_files = matches.is_present("hidden");
+
     WalkDir::new(matches.value_of("PATH").unwrap())
-        .skip_hidden(!matches.is_present("hidden"))
         .into_iter()
-        .filter_map(|possible_path| possible_path.ok())
-        .filter_map(|path| {
-            let possible_pdf = path.path();
-            if let Some(Some("pdf")) = possible_pdf.extension().map(|ext| ext.to_str()) {
-                return Some(possible_pdf.into_os_string());
+        .filter_entry(move |entry| {
+            with_hidden_files
+                || !entry
+                    .file_name()
+                    .to_str()
+                    .map(|s| s.starts_with("."))
+                    .unwrap_or(false)
+        })
+        .par_bridge()
+        .filter_map(|possible_entry| {
+            let possible_pdf = possible_entry.ok()?.into_path();
+            if possible_pdf.extension()?.to_str()? == "pdf" {
+                Some(possible_pdf.into_os_string())
+            } else {
+                None
             }
-            None
         })
         .filter_map(|pdf_path| match pdf::PDFContent::try_from(pdf_path) {
             Ok(pdf_content) => Some(pdf_content),
@@ -46,10 +59,9 @@ fn main() {
                 None
             }
         })
-        .for_each(|pdf_content| {
+        .for_each_with(tx_item, |tx_item, pdf_content| {
             let _ = tx_item.send(Arc::new(pdf_content));
         });
-    drop(tx_item);
 
     let skim_options = SkimOptionsBuilder::default()
         .reverse(true)

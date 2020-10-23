@@ -27,7 +27,7 @@ $ cargo build --release --locked
 ## Usage
 
 ```
-fuzzy-pdf 0.3.3
+fuzzy-pdf 0.3.4
 MarioJim <mario.emilio.j@gmail.com>
 Fuzzy finder for a collection of pdf files
 

@@ -1,6 +1,6 @@
 [package]
 name = "fuzzy-pdf"
-version = "0.3.3"
+version = "0.3.4"
 authors = ["MarioJim <mario.emilio.j@gmail.com>"]
 edition = "2018"
 description = "Fuzzy finder for a collection of pdf files"

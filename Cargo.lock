@@ -479,7 +479,7 @@ dependencies = [
 
 [[package]]
 name = "fuzzy-pdf"
-version = "0.3.3"
+version = "0.3.4"
 dependencies = [
  "clap 3.0.0-beta.2",
  "grep",

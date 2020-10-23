@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["FileIter","Encapsulates a `walkdir` iterator"]]});

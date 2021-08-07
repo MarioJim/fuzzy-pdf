@@ -1,6 +1,7 @@
 # fuzzy-pdf
 
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/MarioJim/fuzzy-pdf/Continuous%20Integration)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/MarioJim/fuzzy-pdf/Release%20pipeline)
 ![GitHub last commit](https://img.shields.io/github/last-commit/MarioJim/fuzzy-pdf)
 ![AUR version](https://img.shields.io/aur/version/fuzzy-pdf)
 

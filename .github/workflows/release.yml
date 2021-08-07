@@ -1,0 +1,52 @@
+name: Release pipeline
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Install poppler
+        run: sudo apt-get install libpoppler-glib-dev
+
+      - name: Build
+        run: cargo build --release
+
+      - name: Strip executable
+        run: strip "target/release/fuzzy-pdf"
+
+      - name: Get the release version from the tag
+        run: |
+          # https://github.community/t5/GitHub-Actions/How-to-get-just-the-tag-name/m-p/32167/highlight/true#M1027
+          echo "FP_VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+
+      - name: Create GitHub release
+        id: release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ env.FP_VERSION }}
+          draft: false
+          prerelease: false
+
+      - name: Save release upload URL to artifact
+        run: echo "RELEASE_URL=${{ steps.release.outputs.upload_url }}" >> $GITHUB_ENV
+
+      - name: Upload release files
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ env.RELEASE_URL }}
+          asset_path: target/release
+          asset_name: fuzzy-pdf
+          asset_content_type: application/octet-stream

@@ -600,7 +600,7 @@ dependencies = [
 
 [[package]]
 name = "fuzzy-pdf"
-version = "0.3.5"
+version = "0.3.6"
 dependencies = [
  "clap 3.0.0-beta.2",
  "grep",
@@ -1072,7 +1072,7 @@ checksum = "3831453b3449ceb48b6d9c7ad7c96d5ea673e9b470a1dc578c2ce6521230884c"
 [[package]]
 name = "poppler"
 version = "0.4.0"
-source = "git+https://github.com/MarioJim/poppler-rs#a2814ae0248d011e5b0a88ec3e470bbe4773bf70"
+source = "git+https://github.com/MarioJim/poppler-rs#467a45dff0fd801983f05c6f34f0edc44fa7d393"
 dependencies = [
  "cairo-rs",
  "poppler-sys",
@@ -1081,7 +1081,7 @@ dependencies = [
 [[package]]
 name = "poppler-sys"
 version = "0.2.0"
-source = "git+https://github.com/MarioJim/poppler-rs#a2814ae0248d011e5b0a88ec3e470bbe4773bf70"
+source = "git+https://github.com/MarioJim/poppler-rs#467a45dff0fd801983f05c6f34f0edc44fa7d393"
 dependencies = [
  "bindgen",
  "cairo-rs",

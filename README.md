@@ -1,9 +1,9 @@
 # fuzzy-pdf
 
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/MarioJim/fuzzy-pdf/Continuous%20Integration)
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/MarioJim/fuzzy-pdf/Release%20pipeline)
+![Continuous Integration](https://github.com/MarioJim/fuzzy-pdf/workflows/Continuous%20Integration/badge.svg)
+![Release pipeline](https://github.com/MarioJim/fuzzy-pdf/workflows/Release%20pipeline/badge.svg)
+![Lines of code](https://tokei.rs/b1/github/MarioJim/fuzzy-pdf?category=code)
 ![GitHub last commit](https://img.shields.io/github/last-commit/MarioJim/fuzzy-pdf)
-![AUR version](https://img.shields.io/aur/version/fuzzy-pdf)
 
 Fuzzy finder for a collection of pdf files. Based on [bellecp/fast-p](https://github.com/bellecp/fast-p) but written in Rust and with less external dependencies.
 
@@ -13,10 +13,18 @@ Fuzzy finder for a collection of pdf files. Based on [bellecp/fast-p](https://gi
 
 ## Installation
 
-If you're an Arch Linux user, then you can install fuzzy-pdf from the [AUR](https://aur.archlinux.org/packages/fuzzy-pdf/):
+If you're an Arch Linux user, then you can install [fuzzy-pdf from the AUR](https://aur.archlinux.org/packages/fuzzy-pdf/):
+![AUR version](https://img.shields.io/aur/version/fuzzy-pdf)
 
 ```
-$ yay -S fuzzy-pdf
+$ paru -S fuzzy-pdf
+```
+
+Or install the [precompiled version](https://aur.archlinux.org/packages/fuzzy-pdf-bin/) with:
+![AUR version](https://img.shields.io/aur/version/fuzzy-pdf-bin)
+
+```
+$ paru -S fuzzy-pdf-bin
 ```
 
 You can also build it from source using cargo:

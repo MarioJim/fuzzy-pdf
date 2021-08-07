@@ -1,3 +1,3 @@
 (function() {var implementors = {};
-implementors["fuzzy_pdf"] = [{"text":"impl Deref for CONFIG","synthetic":false,"types":[]}];
+implementors["fuzzy_pdf"] = [{"text":"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.54.0/core/ops/deref/trait.Deref.html\" title=\"trait core::ops::deref::Deref\">Deref</a> for <a class=\"struct\" href=\"fuzzy_pdf/struct.CONFIG.html\" title=\"struct fuzzy_pdf::CONFIG\">CONFIG</a>","synthetic":false,"types":["fuzzy_pdf::CONFIG"]}];
 if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

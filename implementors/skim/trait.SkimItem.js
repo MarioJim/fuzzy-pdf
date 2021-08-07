@@ -1,3 +1,3 @@
 (function() {var implementors = {};
-implementors["fuzzy_pdf"] = [{"text":"impl SkimItem for PDFContent","synthetic":false,"types":[]}];
+implementors["fuzzy_pdf"] = [{"text":"impl SkimItem for <a class=\"struct\" href=\"fuzzy_pdf/pdf/struct.PDFContent.html\" title=\"struct fuzzy_pdf::pdf::PDFContent\">PDFContent</a>","synthetic":false,"types":["fuzzy_pdf::pdf::PDFContent"]}];
 if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

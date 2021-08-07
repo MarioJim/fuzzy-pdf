@@ -1,3 +1,3 @@
 (function() {var implementors = {};
-implementors["fuzzy_pdf"] = [{"text":"impl TryFrom&lt;OsString&gt; for PDFContent","synthetic":false,"types":[]}];
+implementors["fuzzy_pdf"] = [{"text":"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.54.0/core/convert/trait.TryFrom.html\" title=\"trait core::convert::TryFrom\">TryFrom</a>&lt;<a class=\"struct\" href=\"https://doc.rust-lang.org/1.54.0/std/ffi/os_str/struct.OsString.html\" title=\"struct std::ffi::os_str::OsString\">OsString</a>&gt; for <a class=\"struct\" href=\"fuzzy_pdf/pdf/struct.PDFContent.html\" title=\"struct fuzzy_pdf::pdf::PDFContent\">PDFContent</a>","synthetic":false,"types":["fuzzy_pdf::pdf::PDFContent"]}];
 if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

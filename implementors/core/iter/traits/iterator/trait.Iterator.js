@@ -1,3 +1,3 @@
 (function() {var implementors = {};
-implementors["fuzzy_pdf"] = [{"text":"impl Iterator for FileIter","synthetic":false,"types":[]}];
+implementors["fuzzy_pdf"] = [{"text":"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.54.0/core/iter/traits/iterator/trait.Iterator.html\" title=\"trait core::iter::traits::iterator::Iterator\">Iterator</a> for <a class=\"enum\" href=\"fuzzy_pdf/file_iter/enum.FileIter.html\" title=\"enum fuzzy_pdf::file_iter::FileIter\">FileIter</a>","synthetic":false,"types":["fuzzy_pdf::file_iter::FileIter"]}];
 if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

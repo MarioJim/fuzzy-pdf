@@ -1,0 +1,1 @@
+window.ALL_CRATES = ["fuzzy_pdf"];

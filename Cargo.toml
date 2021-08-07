@@ -11,7 +11,7 @@ license = "MIT"
 clap = "3.0.0-beta.2"
 grep = "0.2"
 lazy_static = "1.4.0"
-poppler = "0.3"
+poppler = { git = "https://github.com/MarioJim/poppler-rs" }
 rayon = "1.5"
 regex = "1"
 skim = "0.9"

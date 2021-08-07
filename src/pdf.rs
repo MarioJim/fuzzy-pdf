@@ -2,11 +2,13 @@ use std::borrow::Cow;
 use std::convert::TryFrom;
 use std::ffi::OsString;
 use std::fmt;
+use std::sync::Arc;
 
 use grep::printer::{ColorSpecs, StandardBuilder};
 use grep::regex::RegexMatcherBuilder;
 use grep::searcher::SearcherBuilder;
 use poppler::PopplerDocument;
+use rayon::iter::{IntoParallelIterator, ParallelIterator};
 use skim::{AnsiString, DisplayContext, ItemPreview, PreviewContext, SkimItem};
 use termcolor::Ansi;
 
@@ -48,7 +50,7 @@ impl SkimItem for PDFContent {
             .after_context(context)
             .before_context(context)
             .build();
-        let _ = searcher.search_slice(&matcher, &self.content.as_bytes(), printer.sink(&matcher));
+        let _ = searcher.search_slice(&matcher, self.content.as_bytes(), printer.sink(&matcher));
 
         ItemPreview::AnsiText(String::from_utf8(printer.into_inner().into_inner()).unwrap())
     }
@@ -59,20 +61,28 @@ impl TryFrom<OsString> for PDFContent {
     type Error = (ParsingError, OsString);
 
     fn try_from(file_path: OsString) -> Result<Self, Self::Error> {
-        let pdf_doc = match PopplerDocument::new_from_file(&file_path, "") {
+        let document = match PopplerDocument::from_file(&file_path, "") {
             Ok(pdf_doc) => pdf_doc,
             Err(_) => return Err((ParsingError::NotAPDF, file_path)),
         };
 
-        let num_pages = pdf_doc.get_n_pages();
+        let num_pages = document.n_pages();
         let max_num_pages = crate::CONFIG.read().unwrap().max_pages;
         if max_num_pages != 0 && max_num_pages < num_pages {
             return Err((ParsingError::TooManyPages, file_path));
         }
 
+        let document_arc = Arc::new(document);
+
         let content: String = (0..num_pages)
-            .filter_map(|page_idx| pdf_doc.get_page(page_idx))
-            .filter_map(|page| page.get_text().map(String::from))
+            .into_par_iter()
+            .map(|page_idx| {
+                Arc::clone(&document_arc)
+                    .page(page_idx)
+                    .map(|page| page.owned_text())
+                    .flatten()
+                    .unwrap_or_default()
+            })
             .collect();
 
         if content.chars().all(|ch| ch.is_whitespace()) {

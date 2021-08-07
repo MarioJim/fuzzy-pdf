@@ -23,7 +23,7 @@ pub fn get_app() -> clap::App<'static> {
         .arg(
             Arg::new("COMMAND")
                 .about("The command to execute when an item has been selected")
-                .long_about(&COMMAND_LONG_ABOUT)
+                .long_about(COMMAND_LONG_ABOUT)
                 .default_value(default_exec)
                 .index(2),
         )

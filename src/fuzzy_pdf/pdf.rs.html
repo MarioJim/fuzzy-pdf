@@ -104,16 +104,28 @@
 <span id="102">102</span>
 <span id="103">103</span>
 <span id="104">104</span>
+<span id="105">105</span>
+<span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
+<span id="110">110</span>
+<span id="111">111</span>
+<span id="112">112</span>
+<span id="113">113</span>
+<span id="114">114</span>
 </pre><pre class="rust">
 <span class="kw">use</span> <span class="ident">std::borrow::Cow</span>;
 <span class="kw">use</span> <span class="ident">std::convert::TryFrom</span>;
 <span class="kw">use</span> <span class="ident">std::ffi::OsString</span>;
 <span class="kw">use</span> <span class="ident">std::fmt</span>;
+<span class="kw">use</span> <span class="ident">std::sync::Arc</span>;
 
 <span class="kw">use</span> <span class="ident">grep::printer</span>::{<span class="ident">ColorSpecs</span>, <span class="ident">StandardBuilder</span>};
 <span class="kw">use</span> <span class="ident">grep::regex::RegexMatcherBuilder</span>;
 <span class="kw">use</span> <span class="ident">grep::searcher::SearcherBuilder</span>;
 <span class="kw">use</span> <span class="ident">poppler::PopplerDocument</span>;
+<span class="kw">use</span> <span class="ident">rayon::iter</span>::{<span class="ident">IntoParallelIterator</span>, <span class="ident">ParallelIterator</span>};
 <span class="kw">use</span> <span class="ident">skim</span>::{<span class="ident">AnsiString</span>, <span class="ident">DisplayContext</span>, <span class="ident">ItemPreview</span>, <span class="ident">PreviewContext</span>, <span class="ident">SkimItem</span>};
 <span class="kw">use</span> <span class="ident">termcolor::Ansi</span>;
 
@@ -155,7 +167,7 @@
             .<span class="ident">after_context</span>(<span class="ident">context</span>)
             .<span class="ident">before_context</span>(<span class="ident">context</span>)
             .<span class="ident">build</span>();
-        <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">searcher</span>.<span class="ident">search_slice</span>(<span class="kw-2">&amp;</span><span class="ident">matcher</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">content</span>.<span class="ident">as_bytes</span>(), <span class="ident">printer</span>.<span class="ident">sink</span>(<span class="kw-2">&amp;</span><span class="ident">matcher</span>));
+        <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">searcher</span>.<span class="ident">search_slice</span>(<span class="kw-2">&amp;</span><span class="ident">matcher</span>, <span class="self">self</span>.<span class="ident">content</span>.<span class="ident">as_bytes</span>(), <span class="ident">printer</span>.<span class="ident">sink</span>(<span class="kw-2">&amp;</span><span class="ident">matcher</span>));
 
         <span class="ident">ItemPreview::AnsiText</span>(<span class="ident">String::from_utf8</span>(<span class="ident">printer</span>.<span class="ident">into_inner</span>().<span class="ident">into_inner</span>()).<span class="ident">unwrap</span>())
     }
@@ -166,20 +178,28 @@
     <span class="kw">type</span> <span class="ident">Error</span> <span class="op">=</span> (<span class="ident">ParsingError</span>, <span class="ident">OsString</span>);
 
     <span class="kw">fn</span> <span class="ident">try_from</span>(<span class="ident">file_path</span>: <span class="ident">OsString</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="self">Self</span><span class="ident">::Error</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">pdf_doc</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">PopplerDocument::new_from_file</span>(<span class="kw-2">&amp;</span><span class="ident">file_path</span>, <span class="string">&quot;&quot;</span>) {
+        <span class="kw">let</span> <span class="ident">document</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">PopplerDocument::from_file</span>(<span class="kw-2">&amp;</span><span class="ident">file_path</span>, <span class="string">&quot;&quot;</span>) {
             <span class="prelude-val">Ok</span>(<span class="ident">pdf_doc</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">pdf_doc</span>,
             <span class="prelude-val">Err</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>((<span class="ident">ParsingError::NotAPDF</span>, <span class="ident">file_path</span>)),
         };
 
-        <span class="kw">let</span> <span class="ident">num_pages</span> <span class="op">=</span> <span class="ident">pdf_doc</span>.<span class="ident">get_n_pages</span>();
+        <span class="kw">let</span> <span class="ident">num_pages</span> <span class="op">=</span> <span class="ident">document</span>.<span class="ident">n_pages</span>();
         <span class="kw">let</span> <span class="ident">max_num_pages</span> <span class="op">=</span> <span class="kw">crate</span><span class="ident">::CONFIG</span>.<span class="ident">read</span>().<span class="ident">unwrap</span>().<span class="ident">max_pages</span>;
         <span class="kw">if</span> <span class="ident">max_num_pages</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span> <span class="op">&amp;&amp;</span> <span class="ident">max_num_pages</span> <span class="op">&lt;</span> <span class="ident">num_pages</span> {
             <span class="kw">return</span> <span class="prelude-val">Err</span>((<span class="ident">ParsingError::TooManyPages</span>, <span class="ident">file_path</span>));
         }
 
+        <span class="kw">let</span> <span class="ident">document_arc</span> <span class="op">=</span> <span class="ident">Arc::new</span>(<span class="ident">document</span>);
+
         <span class="kw">let</span> <span class="ident">content</span>: <span class="ident">String</span> <span class="op">=</span> (<span class="number">0</span>..<span class="ident">num_pages</span>)
-            .<span class="ident">filter_map</span>(<span class="op">|</span><span class="ident">page_idx</span><span class="op">|</span> <span class="ident">pdf_doc</span>.<span class="ident">get_page</span>(<span class="ident">page_idx</span>))
-            .<span class="ident">filter_map</span>(<span class="op">|</span><span class="ident">page</span><span class="op">|</span> <span class="ident">page</span>.<span class="ident">get_text</span>().<span class="ident">map</span>(<span class="ident">String::from</span>))
+            .<span class="ident">into_par_iter</span>()
+            .<span class="ident">map</span>(<span class="op">|</span><span class="ident">page_idx</span><span class="op">|</span> {
+                <span class="ident">Arc::clone</span>(<span class="kw-2">&amp;</span><span class="ident">document_arc</span>)
+                    .<span class="ident">page</span>(<span class="ident">page_idx</span>)
+                    .<span class="ident">map</span>(<span class="op">|</span><span class="ident">page</span><span class="op">|</span> <span class="ident">page</span>.<span class="ident">owned_text</span>())
+                    .<span class="ident">flatten</span>()
+                    .<span class="ident">unwrap_or_default</span>()
+            })
             .<span class="ident">collect</span>();
 
         <span class="kw">if</span> <span class="ident">content</span>.<span class="ident">chars</span>().<span class="ident">all</span>(<span class="op">|</span><span class="ident">ch</span><span class="op">|</span> <span class="ident">ch</span>.<span class="ident">is_whitespace</span>()) {

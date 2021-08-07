@@ -17,7 +17,7 @@ jobs:
         run: sudo apt-get install libpoppler-glib-dev
 
       - name: Build
-        run: cargo build --release
+        run: cargo build --release --locked
 
       - name: Strip executable
         run: strip "target/release/fuzzy-pdf"
